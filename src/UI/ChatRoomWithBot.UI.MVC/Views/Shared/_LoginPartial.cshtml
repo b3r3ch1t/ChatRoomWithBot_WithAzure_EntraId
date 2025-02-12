@@ -1,0 +1,15 @@
+﻿@using ChatRoomWithBot.Application.Interfaces
+@inject IUsersAppService _usersAppService  
+
+<ul class="navbar-nav">
+    @if (_usersAppService.IsAuthenticated())
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Hello @_usersAppService.GetUserName() </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-controller="Account" asp-action="logout">Logout</a>
+             
+        </li>
+    }
+</ul>

@@ -1,0 +1,17 @@
+﻿@model IEnumerable<ChatRoomWithBot.Application.ViewModel.UserViewModel>
+
+@{
+    Layout = "_Layout";
+}
+
+
+
+<h4>@ViewData["Title"]</h4>
+
+
+<p>
+    <a asp-controller="Account" asp-action="Register">Create New</a>
+</p>
+
+
+<partial name="_Users" model="Model" />

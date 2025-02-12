@@ -1,0 +1,36 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable< ChatRoomWithBot.Domain.Entities.ChatRoom>
+
+@{
+    ViewData["Title"] = "Chats";
+}
+
+<div class="container">
+    <h1 class="my-4">Chats</h1>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="list-group">
+            @foreach (var chat in Model)
+            {
+                <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                   asp-controller="ChatRoom" asp-action="JoinChatRoom" asp-route-id="@chat.Id">
+                    <span>@chat.Name</span>
+                    <span class="badge bg-primary">Entrar</span>
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info" role="alert">
+            Nenhum chat disponível no momento.
+        </div>
+    }
+</div>
+
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/chat.js"></script>
+
+
+
