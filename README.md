@@ -101,3 +101,10 @@ You can run the project using Docker or directly in Visual Studio or Visual Code
 - **Visual Studio/Visual Code**
   
   - ChatRoomWithBot.UI.MVC
+ 
+    
+- **Contacts**
+  - [LinkedIn](https://www.linkedin.com/in/anderson-meneses/)  
+📧 anderson.meneses@gmail.com  
+
+#Azure #EntraID #ChatRoom #Chatbot #Authentication #CSharp #DotNet #Microsoft #SoftwareEngineering #CloudComputing #WebDevelopment #AI #DevOps #MachineLearning
