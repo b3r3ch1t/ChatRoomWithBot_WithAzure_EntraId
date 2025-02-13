@@ -85,7 +85,6 @@ This is a browser-based chat application built with .NET CORE 8. It supports rea
 | ChatRoomWithBot.Services.BerechitLogger | Logging services (Serilog, Sentry)                                      |
 | ChatRoomWithBot.Services.RabbitMq       | RabbitMQ message publishing and consuming                               |
 | ChatRoomWithBot.Data                    | Repositories and database connection (MS SQL Server)                    |
-| ChatRoomWithBot.Service.WorkerService   | Background worker service for RabbitMQ message processing               |
 | ChatRoomWithBot.Data.Test               | Unit tests for Data Layer                                               |
 | ChatRoomWithBot.Domain.Test             | Unit tests for Domain Layer                                             |
 
@@ -99,9 +98,13 @@ You can run the project using Docker or directly in Visual Studio or Visual Code
   docker-compose up -d
   ```
 
-- **Visual Studio/Visual Code**:
-  Configure the solution for multiple startup projects and select:
+- **Visual Studio/Visual Code**
   
   - ChatRoomWithBot.UI.MVC
-  
-  - ChatRoomWithBot.Service.WorkerService
+ 
+    
+- **Contacts**
+  - [LinkedIn](https://www.linkedin.com/in/anderson-meneses/)  
+📧 anderson.meneses@gmail.com  
+
+#Azure #EntraID #ChatRoom #Chatbot #Authentication #CSharp #DotNet #Microsoft #SoftwareEngineering #CloudComputing #WebDevelopment #AI #DevOps #MachineLearning
