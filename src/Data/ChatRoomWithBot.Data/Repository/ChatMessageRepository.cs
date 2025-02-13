@@ -14,6 +14,7 @@ public class ChatMessageRepository : Repository<ChatMessage>, IChatMessageReposi
         berechitLogger)
     {
         _berechitLogger = berechitLogger;
+        context.Database.EnsureCreated();
     }
 
     public async Task<IQueryable<ChatMessage>> GetAllMessagesAsync(int qte)

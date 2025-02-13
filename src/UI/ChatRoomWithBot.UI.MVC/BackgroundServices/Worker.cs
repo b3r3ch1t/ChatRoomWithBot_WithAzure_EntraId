@@ -5,7 +5,6 @@ using ChatRoomWithBot.Domain.Events;
 using ChatRoomWithBot.Domain.Interfaces; 
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using IModel = RabbitMQ.Client.IModel;
 
 namespace ChatRoomWithBot.UI.MVC.BackgroundServices
 {
@@ -13,7 +12,7 @@ namespace ChatRoomWithBot.UI.MVC.BackgroundServices
     {
 
         private IConnection _connection;
-        private IModel? _channel;
+        private IChannel? _channel;
         private readonly IBerechitLogger _berechitLogger;
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
@@ -32,11 +31,11 @@ namespace ChatRoomWithBot.UI.MVC.BackgroundServices
             _berechitLogger = berechitLogger;
             _serviceScopeFactory = serviceScopeFactory;
 
-            InitializeRabbitMQ();
+            InitializeRabbitMQ().GetAwaiter().GetResult();
 
         }
 
-        private void  InitializeRabbitMQ()
+        private async Task  InitializeRabbitMQ()
         {
             var factory = new ConnectionFactory
             {
@@ -46,10 +45,10 @@ namespace ChatRoomWithBot.UI.MVC.BackgroundServices
                 Password = SharedSettings.Current.RabbitMq.Password
             };
 
-            _connection = factory.CreateConnection();
-            _channel = _connection.CreateModel();
+            _connection =await  factory.CreateConnectionAsync( );
+            _channel = await _connection.CreateChannelAsync();
 
-            _channel.QueueDeclare(queue: SharedSettings.Current.RabbitMq.Queue,
+            _channel.QueueDeclareAsync( queue: SharedSettings.Current.RabbitMq.Queue,
               durable: true,
               exclusive: false,
               autoDelete: false,
@@ -61,10 +60,10 @@ namespace ChatRoomWithBot.UI.MVC.BackgroundServices
 
         protected override async  Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var consumer = new EventingBasicConsumer(_channel);
+            var consumer = new AsyncEventingBasicConsumer(_channel);
 
 
-            consumer.Received += (model, ea) =>
+            consumer.ReceivedAsync  += async (model, ea) =>
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
@@ -83,23 +82,25 @@ namespace ChatRoomWithBot.UI.MVC.BackgroundServices
                 if (processado.Success )
                 {
                     _berechitLogger.Information("Mensagem processada com sucesso => Cobrança Expirada");
-                    _channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
+                      await _channel.BasicAckAsync( deliveryTag: ea.DeliveryTag, multiple: false, cancellationToken: stoppingToken);
                 }
                 else
                 {
-                    _channel.BasicNack(deliveryTag: ea.DeliveryTag, multiple: false, requeue: true);
+                    await _channel.BasicNackAsync(deliveryTag: ea.DeliveryTag, multiple: false, requeue: true, cancellationToken: stoppingToken);
                     _berechitLogger.Error($"Mensagem não  processada com sucesso - {SharedSettings.Current.RabbitMq.Queue}"); 
 
 
                 }
             };
 
-            _channel.BasicConsume(queue: SharedSettings.Current.RabbitMq.Queue, autoAck: false, consumer: consumer);
+            await _channel.BasicConsumeAsync( queue: SharedSettings.Current.RabbitMq.Queue, autoAck: false, consumer: consumer, cancellationToken: stoppingToken);
 
             while (!stoppingToken.IsCancellationRequested)
             {
                 await Task.Delay(1000, stoppingToken);
             }
+
+            
         }
 
     }

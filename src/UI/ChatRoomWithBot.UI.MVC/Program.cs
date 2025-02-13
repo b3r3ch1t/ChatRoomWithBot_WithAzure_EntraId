@@ -74,7 +74,7 @@ builder.Services.AddSingleton<IConnection>(sp =>
 
 
 
-    return factory.CreateConnection();
+    return factory.CreateConnectionAsync().GetAwaiter().GetResult();
 });
 
 

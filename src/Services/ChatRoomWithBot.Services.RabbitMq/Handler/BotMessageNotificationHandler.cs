@@ -31,13 +31,13 @@ namespace ChatRoomWithBot.Services.RabbitMq.Handler
                     Password = SharedSettings.Current.RabbitMq.Password
                 };
 
-                using (var connection = factory.CreateConnection())
+             await    using (var connection = await factory.CreateConnectionAsync(cancellationToken))
 
 
-                using (var channel = connection.CreateModel())
+            await     using (var channel =   await connection.CreateChannelAsync(cancellationToken: cancellationToken))
                 {
                     // Declaração da fila
-                    channel.QueueDeclare(
+                    await channel.QueueDeclareAsync(
                       queue: SharedSettings.Current.RabbitMq.Queue,
                       durable: true,
                       exclusive: false,
@@ -51,10 +51,10 @@ namespace ChatRoomWithBot.Services.RabbitMq.Handler
 
 
                     // Publicação da mensagem
-                    channel.BasicPublish(
+                  await   channel.BasicPublishAsync( 
                        exchange: "",
                        routingKey: "ChatMessageCommandEvent",
-                       body: body);
+                       body: body, cancellationToken: cancellationToken);
                 }
 
 
