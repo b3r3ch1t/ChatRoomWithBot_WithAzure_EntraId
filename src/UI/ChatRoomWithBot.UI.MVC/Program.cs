@@ -18,7 +18,9 @@ using ChatRoomWithBot.Domain.Interfaces;
 using ChatRoomWithBot.Infra.HttpRequest.Infra.HttpRequest.IoC;
 using ChatRoomWithBot.UI.MVC;
 using ChatRoomWithBot.UI.MVC.BackgroundServices;
+using HealthChecks.UI.Client;
 using RabbitMQ.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 
 Utils.AppName = Assembly.GetExecutingAssembly().GetName().Name;
@@ -80,10 +82,9 @@ builder.Services.AddSingleton<IConnection>(sp =>
 
 builder.Services.AddHealthChecks()
     .AddSqlServer(sharedSettings.SQLServer.ConnectionString)
-    //.AddRabbitMQ()
-    
-    ;
+    .AddRabbitMQ();
 
+ 
 #endregion
 
 
@@ -159,7 +160,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseStaticFiles();
-app.UseRouting();
+app.UseRouting() ;
 
 
 app.UseAuthentication();
@@ -172,13 +173,25 @@ app.MapControllerRoute(
         pattern: "{controller=Home}/{action=Index}/{id?}");
 
 
+
+
+app
+    .UseRouting()
+    .UseEndpoints(config =>
+    {
+        config.MapHealthChecks("/health", new HealthCheckOptions
+        {
+            Predicate = _ => true,
+            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+        });
+    }); 
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapHub<ChatRoomHub>("/chatroom");
 });
 
-
-app.MapHealthChecks("/health");
+ 
 
 
 app.Run();
